@@ -51,7 +51,7 @@ namespace OrderApi.Controllers
             // before you can run the request.
             RestClient c = new RestClient("https://localhost:5001/products/");
             var request = new RestRequest(order.ProductId.ToString());
-            var response = c.PostAsync<Product>(request);
+            var response = c.GetAsync<Product>(request);
             response.Wait();
             var orderedProduct = response.Result;
 
@@ -67,6 +67,7 @@ namespace OrderApi.Controllers
 
                 if (updateResponse.IsCompletedSuccessfully)
                 {
+                    order.State = 0;
                     var newOrder = repository.Add(order);
                     return CreatedAtRoute("GetOrder",
                         new { id = newOrder.Id }, newOrder);
@@ -77,5 +78,28 @@ namespace OrderApi.Controllers
             return NoContent();
         }
 
+        // PUT orders/5
+        [HttpPut("{id}")]
+        public IActionResult PutState(int id, [FromBody] Order order)
+        {
+            if (order == null || order.Id != id)
+            {
+                return BadRequest();
+            }
+
+            var modifiedOrder = repository.Get(id);
+
+            if (modifiedOrder == null)
+            {
+                return NotFound();
+            }
+
+            modifiedOrder.State = order.State;
+
+            repository.Edit(modifiedOrder);
+            return new NoContentResult();
+        }
+
     }
 }
+
