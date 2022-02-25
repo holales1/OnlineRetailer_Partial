@@ -46,13 +46,13 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            RestClient cCustomer = new RestClient("https://localhost:5010/customers/");
+            RestClient cCustomer = new RestClient("https://localhost:5011/customers/");
             var requestCustomer = new RestRequest(order.ProductId.ToString());
-            var responseCustomer = cCustomer.GetAsync<Customer>(requestCustomer);
+            var responseCustomer = cCustomer.GetAsync<Product>(requestCustomer);
             responseCustomer.Wait();
             var orderedCustomer = responseCustomer.Result;
 
-            if (orderedCustomer == null)
+            if (orderedCustomer.Id == 0)
             {
                 return BadRequest();
             }
@@ -60,7 +60,7 @@ namespace OrderApi.Controllers
             // Call ProductApi to get the product ordered
             // You may need to change the port number in the BaseUrl below
             // before you can run the request.
-            RestClient c = new RestClient("https://localhost:5010/customers/");
+            RestClient c = new RestClient("https://localhost:5001/products/");
             var request = new RestRequest(order.ProductId.ToString());
             var response = c.GetAsync<Product>(request);
             response.Wait();
