@@ -46,7 +46,7 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            RestClient cCustomer = new RestClient("https://localhost:5001/products/");
+            RestClient cCustomer = new RestClient("https://localhost:5010/customers/");
             var requestCustomer = new RestRequest(order.ProductId.ToString());
             var responseCustomer = cCustomer.GetAsync<Customer>(requestCustomer);
             responseCustomer.Wait();
