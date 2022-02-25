@@ -51,11 +51,24 @@ namespace CustomerApi.Controllers
             return CreatedAtRoute("GetCustomer", new { id = newCustomer.Id }, newCustomer );
         }
 
+        // PUT customer
+        [HttpPut]
+        public IActionResult Put([FromBody]Customer customer)
+        {
+            if (customer == null)
+            {
+                return BadRequest();
+            }
+
+            var newCustomer = repository.Add(customer);
+
+            return CreatedAtRoute("GetCustomer", new { id = newCustomer.Id }, newCustomer);
+        }
+
         //CREAR API PUT PARA CAMBIAR DATOS DEL CLIENTE
         //PUEDE CAMBIAR EMAIL, PHONE, BILLING ADDRESS & SHIPPING ADDRESS
-        //Nuevo Comentario
-        //Nuevo comentario2
-        
+
+
 
     }
 }
