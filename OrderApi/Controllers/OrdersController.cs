@@ -62,6 +62,13 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
+            var areStandingBills = repository.GetByCustomerId(orderedCustomer.Id);
+
+            if(areStandingBills != null)
+            {
+                return BadRequest();
+            }
+
             // Call ProductApi to get the product ordered
             // You may need to change the port number in the BaseUrl below
             // before you can run the request.
