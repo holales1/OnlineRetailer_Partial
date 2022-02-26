@@ -47,7 +47,7 @@ namespace OrderApi.Controllers
             }
 
             RestClient cCustomer = new RestClient("https://localhost:5011/customers/");
-            var requestCustomer = new RestRequest(order.ProductId.ToString());
+            var requestCustomer = new RestRequest(order.CustomerId.ToString());
             var responseCustomer = cCustomer.GetAsync<Customer>(requestCustomer);
             responseCustomer.Wait();
             var orderedCustomer = responseCustomer.Result;
@@ -56,7 +56,12 @@ namespace OrderApi.Controllers
             {
                 return BadRequest();
             }
-            
+
+            if (orderedCustomer.CreditStanding != 0)
+            {
+                return BadRequest();
+            }
+
             // Call ProductApi to get the product ordered
             // You may need to change the port number in the BaseUrl below
             // before you can run the request.
@@ -78,6 +83,7 @@ namespace OrderApi.Controllers
 
                 if (updateResponse.IsCompletedSuccessfully)
                 {
+                    order.CustomerId = orderedCustomer.Id;
                     order.State = 0;
                     var newOrder = repository.Add(order);
                     return CreatedAtRoute("GetOrder",
