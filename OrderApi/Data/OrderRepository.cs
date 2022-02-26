@@ -36,6 +36,11 @@ namespace OrderApi.Data
             return db.Orders.FirstOrDefault(o => o.Id == id);
         }
 
+       Order IRepository<Order>.GetByCustomerId(int customerId)
+        {
+            return db.Orders.Where(o => o.CustomerId == customerId && o.State != Order.Status.Paid).FirstOrDefault();
+        }
+
         IEnumerable<Order> IRepository<Order>.GetAll()
         {
             return db.Orders.ToList();
