@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using OrderApi.Data;
 using OrderApi.Models;
@@ -35,6 +37,19 @@ namespace OrderApi.Controllers
                 return NotFound();
             }
             return new ObjectResult(item);
+        }
+
+        // GET orders/customer/5
+        [HttpGet("customer/{id}")]
+        public IEnumerable<Order> GetAllByCustomerId(int id)
+        {
+            ObservableCollection<Order> orders = new ObservableCollection<Order>(repository.GetAll());
+            var nullItems = orders.Where(p => p.CustomerId != id).ToList();
+            foreach (var item in nullItems)
+            {
+                orders.Remove(item);
+            }
+            return orders;
         }
 
         // POST orders
