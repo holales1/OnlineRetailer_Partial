@@ -20,7 +20,7 @@ namespace ProductApi.Data
 
             List<Product> products = new List<Product>
             {
-                new Product { Name = "Hammer", Price = 100, ItemsInStock = 10, ItemsReserved = 0 },
+                new Product { Name = "Hammer", Price = 100, ItemsInStock = 10, ItemsReserved = 2 },
                 new Product { Name = "Screwdriver", Price = 70, ItemsInStock = 20, ItemsReserved = 0 },
                 new Product { Name = "Drill", Price = 500, ItemsInStock = 2, ItemsReserved = 0 }
             };
