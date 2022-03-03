@@ -67,6 +67,7 @@ namespace ProductApi.Controllers
 
             modifiedProduct.Name = product.Name;
             modifiedProduct.Price = product.Price;
+            modifiedProduct.Category = product.Category;
             modifiedProduct.ItemsInStock = product.ItemsInStock;
             modifiedProduct.ItemsReserved = product.ItemsReserved;
 
