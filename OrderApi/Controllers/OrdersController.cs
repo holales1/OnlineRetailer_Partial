@@ -139,7 +139,7 @@ namespace OrderApi.Controllers
             return new NoContentResult();
         }
 
-        // Put orders/5
+        // Put orders/cancel/5
         [HttpPut("cancel/{id}")]
         public IActionResult CancelOrder(int id)
         {
@@ -162,6 +162,44 @@ namespace OrderApi.Controllers
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.State = Order.Status.Cancelled;
+                    repository.Edit(order);
+                    return new NoContentResult();
+                }
+                else
+                {
+                    return new NotFoundResult();
+                }
+            }
+            else
+            {
+                return new BadRequestResult();
+            }
+        }
+
+        // Put orders/send/5
+        [HttpPut("send/{id}")]
+        public IActionResult SendOrder(int id)
+        {
+            Order order = repository.Get(id);
+
+            if (order.State == Order.Status.Completed)
+            {
+                RestClient c = new RestClient("https://localhost:5001/products/");
+                var request = new RestRequest(order.ProductId.ToString());
+                var response = c.GetAsync<Product>(request);
+                response.Wait();
+                var product = response.Result;
+
+                product.ItemsReserved -= order.Quantity;
+                product.ItemsInStock -= order.Quantity;
+
+                var updateRequest = new RestRequest(product.Id.ToString());
+                updateRequest.AddJsonBody(product);
+                var updateResponse = c.PutAsync(updateRequest);
+                updateResponse.Wait();
+                if (updateResponse.IsCompletedSuccessfully)
+                {
+                    order.State = Order.Status.Shipped;
                     repository.Edit(order);
                     return new NoContentResult();
                 }
