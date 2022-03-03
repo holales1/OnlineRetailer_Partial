@@ -67,19 +67,7 @@ namespace OrderApi.Controllers
             responseCustomer.Wait();
             var orderedCustomer = responseCustomer.Result;
 
-            if (orderedCustomer.Id == 0)
-            {
-                return BadRequest();
-            }
-
-            if (orderedCustomer.CreditStanding != 0)
-            {
-                return BadRequest();
-            }
-
-            var areStandingBills = repository.GetByCustomerId(orderedCustomer.Id);
-
-            if(areStandingBills != null)
+            if (orderedCustomer.Id == 0 || orderedCustomer.CreditStanding != 0)
             {
                 return BadRequest();
             }
