@@ -70,6 +70,7 @@ namespace CustomerApi.Controllers
             modifiedCustomer.ShippingAddress = customer.ShippingAddress;
             modifiedCustomer.BillingAddress = customer.BillingAddress;
             modifiedCustomer.Email = customer.Email;
+            modifiedCustomer.CreditStanding = customer.CreditStanding;
 
             repository.Edit(modifiedCustomer);
             return new NoContentResult();

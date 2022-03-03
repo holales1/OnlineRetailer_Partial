@@ -91,6 +91,13 @@ namespace OrderApi.Controllers
                 var updateResponse = c.PutAsync(updateRequest);
                 updateResponse.Wait();
 
+                orderedCustomer.CreditStanding += (int)orderedProduct.Price * order.Quantity;
+
+                var updateRequestCustomer = new RestRequest(orderedCustomer.Id.ToString());
+                updateRequestCustomer.AddJsonBody(orderedCustomer);
+                var updateResponseCustomer = cCustomer.PutAsync(updateRequestCustomer);
+                updateResponseCustomer.Wait();
+
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.CustomerId = orderedCustomer.Id;
@@ -125,6 +132,43 @@ namespace OrderApi.Controllers
 
             repository.Edit(modifiedOrder);
             return new NoContentResult();
+        }
+
+        // Put orders/paid/5
+        [HttpPut("paid/{id}")]
+        public IActionResult PaidOrder(int id)
+        {
+            Order order = repository.Get(id);
+
+            if (order.State == Order.Status.Shipped)
+            {
+                RestClient c = new RestClient("https://localhost:5011/customers/");
+                var request = new RestRequest(order.CustomerId.ToString());
+                var response = c.GetAsync<Customer>(request);
+                response.Wait();
+                var customer = response.Result;
+
+                customer.CreditStanding = 0;
+
+                var updateRequest = new RestRequest(customer.Id.ToString());
+                updateRequest.AddJsonBody(customer);
+                var updateResponse = c.PutAsync(updateRequest);
+                updateResponse.Wait();
+                if (updateResponse.IsCompletedSuccessfully)
+                {
+                    order.State = Order.Status.Paid;
+                    repository.Edit(order);
+                    return new NoContentResult();
+                }
+                else
+                {
+                    return new NotFoundResult();
+                }
+            }
+            else
+            {
+                return new BadRequestResult();
+            }
         }
 
         // Put orders/cancel/5
