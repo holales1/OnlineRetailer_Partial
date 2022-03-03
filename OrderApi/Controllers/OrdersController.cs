@@ -172,23 +172,52 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                RestClient c = new RestClient("https://localhost:5001/products/");
-                var request = new RestRequest(order.ProductId.ToString());
-                var response = c.GetAsync<Product>(request);
-                response.Wait();
-                var product = response.Result;
+                RestClient clientProduct = new RestClient("https://localhost:5001/products/");
+                var requestProduct = new RestRequest(order.ProductId.ToString());
+                var responseProduct = clientProduct.GetAsync<Product>(requestProduct);
+                responseProduct.Wait();
+                var product = responseProduct.Result;
 
                 product.ItemsReserved -= order.Quantity;
                 product.ItemsInStock -= order.Quantity;
 
                 var updateRequest = new RestRequest(product.Id.ToString());
                 updateRequest.AddJsonBody(product);
-                var updateResponse = c.PutAsync(updateRequest);
+                var updateResponse = clientProduct.PutAsync(updateRequest);
                 updateResponse.Wait();
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.State = Order.Status.Shipped;
                     repository.Edit(order);
+
+                    RestClient clientTotalEmail = new RestClient("https://localhost:5021/emails/total/");
+                    var requestTotalEmail = new RestRequest();
+                    var responseTotalEmail = clientTotalEmail.GetAsync<int>(requestTotalEmail);
+                    responseTotalEmail.Wait();
+                    int totalEmails = responseTotalEmail.Result;
+
+                    RestClient clientCustomer = new RestClient("https://localhost:5011/customers/");
+                    var requestCustomer = new RestRequest(order.CustomerId.ToString());
+                    var responseCustomer = clientCustomer.GetAsync<Customer>(requestCustomer);
+                    responseCustomer.Wait();
+                    Customer customer = responseCustomer.Result;
+
+                    Email email = new Email();
+                    email.Id = totalEmails + 1;
+                    email.Destination = customer.Email;
+                    email.Content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
+
+                    RestClient clientSendEmail = new RestClient("https://localhost:5021/emails/");
+                    var requestSendEmail = new RestRequest();
+                    requestSendEmail.AddJsonBody(email);
+                    var responseSendEmail = clientSendEmail.PostAsync(requestSendEmail);
+                    responseSendEmail.Wait();
+
+                    if (!responseSendEmail.IsCompletedSuccessfully)
+                    {
+                        //Add wait list to send the email later...
+                    }
+
                     return new NoContentResult();
                 }
                 else
