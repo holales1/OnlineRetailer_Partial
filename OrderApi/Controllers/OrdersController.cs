@@ -67,8 +67,17 @@ namespace OrderApi.Controllers
             responseCustomer.Wait();
             var orderedCustomer = responseCustomer.Result;
 
-            if (orderedCustomer.Id == 0 || orderedCustomer.CreditStanding != 0)
+            if (orderedCustomer.Id == 0 )
             {
+                string content = "You dont have an account, please register before order.";
+                sendEmail(orderedCustomer.Email, content);
+                return BadRequest();
+            }
+
+            if (orderedCustomer.CreditStanding != 0)
+            {
+                string content = String.Format("You already have a deb of {0}kr, please pay it before order more.", orderedCustomer.CreditStanding);
+                sendEmail(orderedCustomer.Email, content);
                 return BadRequest();
             }
 
@@ -103,9 +112,15 @@ namespace OrderApi.Controllers
                     order.CustomerId = orderedCustomer.Id;
                     order.State = 0;
                     var newOrder = repository.Add(order);
-                    return CreatedAtRoute("GetOrder",
-                        new { id = newOrder.Id }, newOrder);
+                    string content = "The order has been accepted.";
+                    sendEmail(orderedCustomer.Email, content);
+                    return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
                 }
+            }
+            else
+            {
+                string content = "We haven't enough items today, please do the order another day.";
+                sendEmail(orderedCustomer.Email, content);
             }
 
             // If the order could not be created, "return no content".
@@ -234,11 +249,7 @@ namespace OrderApi.Controllers
                     order.State = Order.Status.Shipped;
                     repository.Edit(order);
 
-                    RestClient clientTotalEmail = new RestClient("https://localhost:5021/emails/total/");
-                    var requestTotalEmail = new RestRequest();
-                    var responseTotalEmail = clientTotalEmail.GetAsync<int>(requestTotalEmail);
-                    responseTotalEmail.Wait();
-                    int totalEmails = responseTotalEmail.Result;
+                    
 
                     RestClient clientCustomer = new RestClient("https://localhost:5011/customers/");
                     var requestCustomer = new RestRequest(order.CustomerId.ToString());
@@ -246,18 +257,10 @@ namespace OrderApi.Controllers
                     responseCustomer.Wait();
                     Customer customer = responseCustomer.Result;
 
-                    Email email = new Email();
-                    email.Id = totalEmails + 1;
-                    email.Destination = customer.Email;
-                    email.Content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
+                    string content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
+                    bool sended = sendEmail(customer.Email, content);
 
-                    RestClient clientSendEmail = new RestClient("https://localhost:5021/emails/");
-                    var requestSendEmail = new RestRequest();
-                    requestSendEmail.AddJsonBody(email);
-                    var responseSendEmail = clientSendEmail.PostAsync(requestSendEmail);
-                    responseSendEmail.Wait();
-
-                    if (!responseSendEmail.IsCompletedSuccessfully)
+                    if (!sended)
                     {
                         //Add wait list to send the email later...
                     }
@@ -273,6 +276,30 @@ namespace OrderApi.Controllers
             {
                 return new BadRequestResult();
             }
+        }
+
+        private bool sendEmail(string dest, string content)
+        {
+
+            RestClient clientTotalEmail = new RestClient("https://localhost:5021/emails/total/");
+            var requestTotalEmail = new RestRequest();
+            var responseTotalEmail = clientTotalEmail.GetAsync<int>(requestTotalEmail);
+            responseTotalEmail.Wait();
+            int totalEmails = responseTotalEmail.Result;
+
+            Email email = new Email();
+            email.Id = totalEmails + 1;
+            email.Destination = dest;
+            email.Content = content;
+
+            RestClient clientSendEmail = new RestClient("https://localhost:5021/emails/");
+            var requestSendEmail = new RestRequest();
+            requestSendEmail.AddJsonBody(email);
+            var responseSendEmail = clientSendEmail.PostAsync(requestSendEmail);
+            responseSendEmail.Wait();
+
+            return responseSendEmail.IsCompletedSuccessfully;
+
         }
 
     }
