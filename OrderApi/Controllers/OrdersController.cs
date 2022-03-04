@@ -107,8 +107,6 @@ namespace OrderApi.Controllers
                 return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
             }
 
-
-
             // If the order could not be created, "return no content".
             return NoContent();
         }
@@ -303,7 +301,6 @@ namespace OrderApi.Controllers
             }
             return aux;
         }
-
 
         private List<Product> getProductList(Order order)
         {
