@@ -13,25 +13,33 @@ namespace OrderApi.Controllers
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly IRepository<Order> repository;
+        private readonly IRepository<Order> repositoryOrders;
+        private readonly IRepositoryOrderLine<OrderLine> repositoryOrderLines;
 
-        public OrdersController(IRepository<Order> repos)
+        public OrdersController(IRepository<Order> repos, IRepositoryOrderLine<OrderLine> repos2)
         {
-            repository = repos;
+            repositoryOrders = repos;
+            repositoryOrderLines = repos2;
         }
 
         // GET: orders
         [HttpGet]
         public IEnumerable<Order> Get()
         {
-            return repository.GetAll();
+            return repositoryOrders.GetAll();
+        }
+
+        [HttpGet("orderLine/{orderId}")]
+        public IEnumerable<OrderLine> GetOrderLine(int orderId)
+        {
+            return repositoryOrderLines.GetByOrderId(orderId);
         }
 
         // GET orders/5
         [HttpGet("{id}", Name = "GetOrder")]
         public IActionResult Get(int id)
         {
-            var item = repository.Get(id);
+            var item = repositoryOrders.Get(id);
             if (item == null)
             {
                 return NotFound();
@@ -43,7 +51,7 @@ namespace OrderApi.Controllers
         [HttpGet("customer/{id}")]
         public IEnumerable<Order> GetAllByCustomerId(int id)
         {
-            ObservableCollection<Order> orders = new ObservableCollection<Order>(repository.GetAll());
+            ObservableCollection<Order> orders = new ObservableCollection<Order>(repositoryOrders.GetAll());
             var nullItems = orders.Where(p => p.CustomerId != id).ToList();
             foreach (var item in nullItems)
             {
@@ -111,7 +119,7 @@ namespace OrderApi.Controllers
                 {
                     order.CustomerId = orderedCustomer.Id;
                     order.State = 0;
-                    var newOrder = repository.Add(order);
+                    var newOrder = repositoryOrders.Add(order);
                     string content = "The order has been accepted.";
                     sendEmail(orderedCustomer.Email, content);
                     return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
@@ -136,7 +144,7 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            var modifiedOrder = repository.Get(id);
+            var modifiedOrder = repositoryOrders.Get(id);
 
             if (modifiedOrder == null)
             {
@@ -145,7 +153,7 @@ namespace OrderApi.Controllers
 
             modifiedOrder.State = order.State;
 
-            repository.Edit(modifiedOrder);
+            repositoryOrders.Edit(modifiedOrder);
             return new NoContentResult();
         }
 
@@ -153,7 +161,7 @@ namespace OrderApi.Controllers
         [HttpPut("paid/{id}")]
         public IActionResult PaidOrder(int id)
         {
-            Order order = repository.Get(id);
+            Order order = repositoryOrders.Get(id);
 
             if (order.State == Order.Status.Shipped)
             {
@@ -172,7 +180,7 @@ namespace OrderApi.Controllers
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.State = Order.Status.Paid;
-                    repository.Edit(order);
+                    repositoryOrders.Edit(order);
                     return new NoContentResult();
                 }
                 else
@@ -190,7 +198,7 @@ namespace OrderApi.Controllers
         [HttpPut("cancel/{id}")]
         public IActionResult CancelOrder(int id)
         {
-            Order order = repository.Get(id);
+            Order order = repositoryOrders.Get(id);
 
             if (order.State == Order.Status.Completed)
             {
@@ -209,7 +217,7 @@ namespace OrderApi.Controllers
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.State = Order.Status.Cancelled;
-                    repository.Edit(order);
+                    repositoryOrders.Edit(order);
                     return new NoContentResult();
                 }
                 else
@@ -227,7 +235,7 @@ namespace OrderApi.Controllers
         [HttpPut("send/{id}")]
         public IActionResult SendOrder(int id)
         {
-            Order order = repository.Get(id);
+            Order order = repositoryOrders.Get(id);
 
             if (order.State == Order.Status.Completed)
             {
@@ -247,7 +255,7 @@ namespace OrderApi.Controllers
                 if (updateResponse.IsCompletedSuccessfully)
                 {
                     order.State = Order.Status.Shipped;
-                    repository.Edit(order);
+                    repositoryOrders.Edit(order);
 
                     
 

@@ -27,6 +27,8 @@ namespace OrderApi
             // Register repositories for dependency injection
             services.AddScoped<IRepository<Order>, OrderRepository>();
 
+            services.AddScoped<IRepositoryOrderLine<OrderLine>, OrderLineRepository>();
+
             // Register database initializer for dependency injection
             services.AddTransient<IDbInitializer, DbInitializer>();
 

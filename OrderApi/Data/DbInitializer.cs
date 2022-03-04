@@ -14,7 +14,7 @@ namespace OrderApi.Data
             context.Database.EnsureCreated();
 
             // Look for any Products
-            if (context.Orders.Any())
+            if (context.Orders.Any() || context.OrderLines.Any())
             {
                 return;   // DB has been seeded
             }
@@ -26,7 +26,18 @@ namespace OrderApi.Data
 
             };
 
+            List<OrderLine> orderLines = new List<OrderLine> 
+            { 
+                new OrderLine{ OrderId=1, ProductId=1,Quantity=2},
+                new OrderLine{ OrderId=1, ProductId=2,Quantity=1},
+                new OrderLine{ OrderId=1, ProductId=3,Quantity=1},
+
+                new OrderLine{ OrderId=2, ProductId=1,Quantity=2},
+                new OrderLine{ OrderId=2, ProductId=2,Quantity=1},
+            };
+
             context.Orders.AddRange(orders);
+            context.OrderLines.AddRange(orderLines);
             context.SaveChanges();
         }
     }

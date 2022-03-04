@@ -27,7 +27,7 @@ namespace CustomerApi.Data
                                Phone = "+4500000001",
                                BillingAddress = "Fake street 123, 6500 Esbjerg",
                                ShippingAddress = "Fake street 123, 6500 Esbjerg",
-                               CreditStanding = 0 },
+                               CreditStanding = 270 },
 
                 new Customer { Id = 2,
                                 Name = "Paco",
