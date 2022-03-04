@@ -43,7 +43,7 @@ namespace OrderApi.Data
 
         IEnumerable<Order> IRepository<Order>.GetAll()
         {
-            return db.Orders.ToList();
+            return db.Orders.Include(o => o.orderLines).ToList();
         }
 
         void IRepository<Order>.Remove(int id)
