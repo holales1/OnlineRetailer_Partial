@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OrderApi.Models
 {
     public class Order
@@ -8,7 +11,6 @@ namespace OrderApi.Models
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public int CustomerId { get; set; }
-
         public Status State { get; set; }
 
         public enum Status
