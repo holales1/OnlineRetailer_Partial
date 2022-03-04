@@ -10,7 +10,6 @@ namespace OrderApi.Models
         public DateTime? Date { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public List<ProductQuantity> ProductList { get; set; } = new List<ProductQuantity>();
         public int CustomerId { get; set; }
         public Status State { get; set; }
 
