@@ -158,22 +158,20 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                RestClient c = new RestClient("https://localhost:5001/products/");
-                var request = new RestRequest(order.ProductId.ToString());
-                var response = c.GetAsync<Product>(request);
-                response.Wait();
-                var product = response.Result;
+                bool productsUpdated= cancelProductStock(order);
 
-                product.ItemsReserved -= order.Quantity;
-
-                var updateRequest = new RestRequest(product.Id.ToString());
-                updateRequest.AddJsonBody(product);
-                var updateResponse = c.PutAsync(updateRequest);
-                updateResponse.Wait();
-                if (updateResponse.IsCompletedSuccessfully)
+                if (productsUpdated)
                 {
                     order.State = Order.Status.Cancelled;
                     repositoryOrders.Edit(order);
+
+                    Customer customer = getCustomer(order.CustomerId);
+                    customer.CreditStanding -= totalAmount(order);
+                    setCustomer(customer);
+
+                    string content = String.Format("The order with id: {0}, has been cancelled.", order.Id);
+                    sendEmail(customer.Email, content);
+
                     return new NoContentResult();
                 }
                 else
@@ -195,7 +193,7 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                bool productsUpdated = decreaseProductStock(order);
+                bool productsUpdated = sendProductStock(order);
 
                 if (productsUpdated)
                 {
@@ -293,7 +291,7 @@ namespace OrderApi.Controllers
             return orderedCustomer;
         }
     
-        private bool decreaseProductStock(Order order)
+        private bool sendProductStock(Order order)
         {
             bool aux = true;
             foreach(OrderLine line in order.orderLines)
@@ -307,6 +305,7 @@ namespace OrderApi.Controllers
             }
             return aux;
         }
+
 
         private List<Product> getProductList(Order order)
         {
@@ -347,6 +346,30 @@ namespace OrderApi.Controllers
             return true;
         }
 
+        private bool cancelProductStock(Order order)
+        {
+            bool aux = true;
+            foreach (OrderLine line in order.orderLines)
+            {
+                Product product = getProduct(line.ProductId);
+
+                product.ItemsReserved -= line.Quantity;
+
+                aux = setProduct(product);
+            }
+            return aux;
+        }
+
+        private int totalAmount(Order order)
+        {
+            int total = 0;
+            foreach (OrderLine line in order.orderLines)
+            {
+                Product product = getProduct(line.ProductId);
+                total += line.Quantity * product.Price;
+            }            
+            return total;
+        }
     }
 }
 
