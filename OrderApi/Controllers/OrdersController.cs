@@ -129,28 +129,6 @@ namespace OrderApi.Controllers
             return NoContent();
         }
 
-        // PUT orders/5
-        [HttpPut("{id}")]
-        public IActionResult PutState(int id, [FromBody] Order order)
-        {
-            if (order == null || order.Id != id)
-            {
-                return BadRequest();
-            }
-
-            var modifiedOrder = repositoryOrders.Get(id);
-
-            if (modifiedOrder == null)
-            {
-                return NotFound();
-            }
-
-            modifiedOrder.State = order.State;
-
-            repositoryOrders.Edit(modifiedOrder);
-            return new NoContentResult();
-        }
-
         // Put orders/paid/5
         [HttpPut("paid/{id}")]
         public IActionResult PaidOrder(int id)
