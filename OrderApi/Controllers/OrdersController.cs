@@ -56,7 +56,7 @@ namespace OrderApi.Controllers
 
         // POST orders
         [HttpPost]
-        public IActionResult Post([FromBody]Order order)
+        public IActionResult Post([FromBody] Order order)
         {
             if (order == null)
             {
@@ -65,7 +65,7 @@ namespace OrderApi.Controllers
 
             Customer customer = getCustomer(order.CustomerId);
 
-            if (customer.Id == 0 )
+            if (customer.Id == 0)
             {
                 string content = "You dont have an account, please register before order.";
                 sendEmail(customer.Email, content);
@@ -79,34 +79,35 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            Product product = getProduct(order.ProductId);
+            List<Product> productList = getProductList(order);
 
-            if (order.Quantity <= product.ItemsInStock - product.ItemsReserved)
-            {
-                product.ItemsReserved += order.Quantity;
-                bool productUpdated = setProduct(product);
-
-                customer.CreditStanding += (int)product.Price * order.Quantity;
-
-                setCustomer(customer);
-
-                if (productUpdated)
-                {
-                    order.CustomerId = customer.Id;
-                    order.State = 0;
-                    var newOrder = repositoryOrders.Add(order);
-
-                    string content = "The order has been accepted.";
-                    sendEmail(customer.Email, content);
-
-                    return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
-                }
-            }
-            else
+            if (checkIfAllProductsAreAvaliable(productList, order)==false)
             {
                 string content = "We haven't enough items today, please do the order another day.";
                 sendEmail(customer.Email, content);
+                return BadRequest();
             }
+            
+
+            bool productUpdated = setReservedItemsForEachProduct(productList, order);
+
+            customer.CreditStanding += totalAmount(order);
+
+            setCustomer(customer);
+
+            if (productUpdated)
+            {
+                order.CustomerId = customer.Id;
+                order.State = 0;
+                var newOrder = repositoryOrders.Add(order);
+
+                string content = "The order has been accepted.";
+                sendEmail(customer.Email, content);
+
+                return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
+            }
+
+
 
             // If the order could not be created, "return no content".
             return NoContent();
@@ -307,6 +308,44 @@ namespace OrderApi.Controllers
             return aux;
         }
 
+        private List<Product> getProductList(Order order)
+        {
+            List<Product> productList = new List<Product>();
+            foreach (var orderLine in order.orderLines)
+            {
+                Product product = getProduct(orderLine.ProductId);
+                productList.Add(product);
+            }
+            return productList;
+        }
+
+        private bool checkIfAllProductsAreAvaliable(List<Product> productList, Order order)
+        {
+            foreach (var product in productList)
+            {
+                var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
+                if (selectedOrder.Quantity > product.ItemsInStock - product.ItemsReserved)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool setReservedItemsForEachProduct(List<Product> products, Order order)
+        {
+            foreach (var product in products)
+            {
+                var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
+                product.ItemsReserved += selectedOrder.Quantity;
+                bool productUpdated = setProduct(product);
+                if (productUpdated==false)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 }
