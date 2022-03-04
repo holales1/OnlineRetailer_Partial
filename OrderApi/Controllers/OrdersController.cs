@@ -29,12 +29,6 @@ namespace OrderApi.Controllers
             return repositoryOrders.GetAll();
         }
 
-        [HttpGet("orderLine/{orderId}")]
-        public IEnumerable<OrderLine> GetOrderLine(int orderId)
-        {
-            return repositoryOrderLines.GetByOrderId(orderId);
-        }
-
         // GET orders/5
         [HttpGet("{id}", Name = "GetOrder")]
         public IActionResult Get(int id)
