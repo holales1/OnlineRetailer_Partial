@@ -194,31 +194,14 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                RestClient clientProduct = new RestClient("https://localhost:5001/products/");
-                var requestProduct = new RestRequest(order.ProductId.ToString());
-                var responseProduct = clientProduct.GetAsync<Product>(requestProduct);
-                responseProduct.Wait();
-                var product = responseProduct.Result;
+                bool productsUpdated = decreaseProductStock(order);
 
-                product.ItemsReserved -= order.Quantity;
-                product.ItemsInStock -= order.Quantity;
-
-                var updateRequest = new RestRequest(product.Id.ToString());
-                updateRequest.AddJsonBody(product);
-                var updateResponse = clientProduct.PutAsync(updateRequest);
-                updateResponse.Wait();
-                if (updateResponse.IsCompletedSuccessfully)
+                if (productsUpdated)
                 {
                     order.State = Order.Status.Shipped;
                     repositoryOrders.Edit(order);
 
-                    
-
-                    RestClient clientCustomer = new RestClient("https://localhost:5011/customers/");
-                    var requestCustomer = new RestRequest(order.CustomerId.ToString());
-                    var responseCustomer = clientCustomer.GetAsync<Customer>(requestCustomer);
-                    responseCustomer.Wait();
-                    Customer customer = responseCustomer.Result;
+                    Customer customer = getCustomer(order.CustomerId);
 
                     string content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
                     bool sended = sendEmail(customer.Email, content);
@@ -309,7 +292,22 @@ namespace OrderApi.Controllers
             return orderedCustomer;
         }
     
-    
+        private bool decreaseProductStock(Order order)
+        {
+            bool aux = true;
+            foreach(OrderLine line in order.orderLines)
+            {
+                Product product = getProduct(line.ProductId);
+
+                product.ItemsReserved -= line.Quantity;
+                product.ItemsInStock -= line.Quantity;
+
+                aux = setProduct(product);
+            }
+            return aux;
+        }
+
+
     }
 }
 
