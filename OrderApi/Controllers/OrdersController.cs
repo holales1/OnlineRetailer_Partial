@@ -114,29 +114,27 @@ namespace OrderApi.Controllers
         }
 
         // Put orders/paid/5
-        [HttpPut("paid/{id}")]
-        public IActionResult PaidOrder(int id)
+        [HttpPut("pay/{id}")]
+        public IActionResult PayOrder(int id)
         {
             Order order = repositoryOrders.Get(id);
 
             if (order.State == Order.Status.Shipped)
             {
-                RestClient c = new RestClient("https://localhost:5011/customers/");
-                var request = new RestRequest(order.CustomerId.ToString());
-                var response = c.GetAsync<Customer>(request);
-                response.Wait();
-                var customer = response.Result;
 
-                customer.CreditStanding = 0;
+                Customer customer = getCustomer(order.CustomerId);
 
-                var updateRequest = new RestRequest(customer.Id.ToString());
-                updateRequest.AddJsonBody(customer);
-                var updateResponse = c.PutAsync(updateRequest);
-                updateResponse.Wait();
-                if (updateResponse.IsCompletedSuccessfully)
+                customer.CreditStanding -= totalAmount(order);
+
+                bool customerUpdate = setCustomer(customer);
+                if (customerUpdate)
                 {
                     order.State = Order.Status.Paid;
                     repositoryOrders.Edit(order);
+
+                    string content = String.Format("Thanks for pay your order {0}", order.Id);
+                    sendEmail(customer.Email, content);
+
                     return new NoContentResult();
                 }
                 else
