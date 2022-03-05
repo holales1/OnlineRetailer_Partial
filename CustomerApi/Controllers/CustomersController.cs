@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using CustomerApi.Data;
 using CustomerApi.Models;
@@ -75,7 +74,6 @@ namespace CustomerApi.Controllers
             repository.Edit(modifiedCustomer);
             return new NoContentResult();
         }
-
 
     }
 }

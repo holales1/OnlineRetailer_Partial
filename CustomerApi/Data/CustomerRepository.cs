@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CustomerApi.Models;
-using System;
 
 namespace CustomerApi.Data
 {
@@ -47,5 +46,6 @@ namespace CustomerApi.Data
             db.Customers.Remove(customer);
             db.SaveChanges();
         }
+
     }
 }

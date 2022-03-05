@@ -1,0 +1,479 @@
+{
+	"info": {
+		"_postman_id": "df6e1cc4-c948-41c7-a715-d8d5fa6336b4",
+		"name": "OnlineRetailer_Full",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CustomerAPI",
+			"item": [
+				{
+					"name": "GET customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5443/customers",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5443",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET customers/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5443/customers/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5443",
+							"path": [
+								"customers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST customers",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Juan\",\r\n    \"email\": \"juan@gmail.com\",\r\n    \"phone\": \"+4552629614\",\r\n    \"billingAdsress\": \"Consumer avenue 2 Esbjerg\",\r\n    \"shippingAddress\": \"Consumer avenue 2 Esbjerg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5443/customers",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5443",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT customers/3",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 3,\r\n    \"name\": \"Juan\",\r\n    \"email\": \"juan2@gmail.com\",\r\n    \"phone\": \"+4552629614\",\r\n    \"billingAddress\": \"Consumer avenue 3 Esbjerg\",\r\n    \"shippingAddress\": \"Consumer avenue 3 Esbjerg\",\r\n    \"creditStanding\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5443/customers/3",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5443",
+							"path": [
+								"customers",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EmailAPI",
+			"item": [
+				{
+					"name": "GET emails",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:6443/emails",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "6443",
+							"path": [
+								"emails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET emails/total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:6443/emails/total",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "6443",
+							"path": [
+								"emails",
+								"total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET emails/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:6443/emails/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "6443",
+							"path": [
+								"emails",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST emails",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"destination\": \"juan@gmail.com\",\r\n    \"content\": \"Welcome, thanks for register to the store\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:6443/emails",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "6443",
+							"path": [
+								"emails"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProductAPI",
+			"item": [
+				{
+					"name": "GET products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/products",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET products/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/products/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST products",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Nails\",\r\n    \"price\": 5,\r\n    \"category\": \"consumable\",\r\n    \"itemsInStock\": 2000,\r\n    \"itemsReserved\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/products",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT products/4",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 4,\r\n    \"name\": \"Nails\",\r\n    \"price\": 10,\r\n    \"category\": \"consumable\",\r\n    \"itemsInStock\": 2000,\r\n    \"itemsReserved\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/products/4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE products/4",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/products/4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OrderAPI",
+			"item": [
+				{
+					"name": "GET orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET orders/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET orders/customer/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders/customer/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders",
+								"customer",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST orders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customerId\": 2,\r\n    \"orderLines\": [\r\n        {\r\n            \"productId\": 4,\r\n            \"quantity\": 100\r\n        },\r\n        {\r\n            \"productId\": 3,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7443/orders",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT orders/pay/1",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders/pay/4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders",
+								"pay",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT orders/cancel/3",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders/cancel/4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders",
+								"cancel",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT orders/send/1",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7443/orders/send/4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7443",
+							"path": [
+								"orders",
+								"send",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

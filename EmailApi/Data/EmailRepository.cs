@@ -21,12 +21,6 @@ namespace EmailApi.Data
             return newEmail;
         }
 
-        void IRepository<Email>.Edit(Email entity)
-        {
-            db.Entry(entity).State = EntityState.Modified;
-            db.SaveChanges();
-        }
-
         Email IRepository<Email>.Get(int id)
         {
             return db.Emails.FirstOrDefault(o => o.Id == id);
@@ -37,11 +31,5 @@ namespace EmailApi.Data
             return db.Emails.ToList();
         }
 
-        void IRepository<Email>.Remove(int id)
-        {
-            var email = db.Emails.FirstOrDefault(p => p.Id == id);
-            db.Emails.Remove(email);
-            db.SaveChanges();
-        }
     }
 }
