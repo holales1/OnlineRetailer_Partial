@@ -22,6 +22,7 @@ namespace OrderApi.Controllers
             repositoryOrderLines = repos2;
         }
 
+        
         // GET: orders
         [HttpGet]
         public IEnumerable<Order> Get()
@@ -79,9 +80,7 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            List<Product> productList = getProductList(order);
-
-            if (checkIfAllProductsAreAvaliable(productList, order) == false)
+            if (!checkIfAllProductsAreAvaliable(order))
             {
                 string content = "We haven't enough items today, please do the order another day.";
                 sendEmail(customer.Email, content);
@@ -89,7 +88,7 @@ namespace OrderApi.Controllers
             }
 
 
-            bool productUpdated = setReservedItemsForEachProduct(productList, order);
+            bool productUpdated = setReservedItemsForEachProduct(order);
 
             customer.CreditStanding += totalAmount(order);
 
@@ -219,6 +218,7 @@ namespace OrderApi.Controllers
             }
         }
 
+        
 
         public bool sendEmail(string dest, string content)
         {
@@ -312,9 +312,10 @@ namespace OrderApi.Controllers
             }
             return productList;
         }
-
-        public bool checkIfAllProductsAreAvaliable(List<Product> productList, Order order)
+               
+        public bool checkIfAllProductsAreAvaliable(Order order)
         {
+            List<Product> productList = getProductList(order);
             foreach (var product in productList)
             {
                 var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
@@ -326,9 +327,10 @@ namespace OrderApi.Controllers
             return true;
         }
 
-        public bool setReservedItemsForEachProduct(List<Product> products, Order order)
+        public bool setReservedItemsForEachProduct(Order order)
         {
-            foreach (var product in products)
+            List<Product> productList = getProductList(order);
+            foreach (var product in productList)
             {
                 var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
                 product.ItemsReserved += selectedOrder.Quantity;
@@ -339,7 +341,7 @@ namespace OrderApi.Controllers
                 }
             }
             return true;
-        }
+        }        
 
         public bool cancelProductStock(Order order)
         {
