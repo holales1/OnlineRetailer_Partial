@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "customerapi": "StartDebugging",
+        "emailapi": "StartDebugging",
+        "orderapi": "StartDebugging",
+        "productapi": "StartDebugging"
+      },
+      "commandVersion": "1.0"
+    },
+    "NoDebug": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "customerapi": "StartWithoutDebugging",
+        "emailapi": "StartWithoutDebugging",
+        "orderapi": "StartWithoutDebugging",
+        "productapi": "StartWithoutDebugging"
+      },
+      "commandVersion": "1.0"
+    }
+  }
+}
