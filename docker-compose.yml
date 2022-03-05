@@ -12,16 +12,16 @@ services:
     build:
       context: .
       dockerfile: EmailApi/Dockerfile
-      
-  productapi:
-    image: ${DOCKER_REGISTRY-}productapi
-    build:
-      context: .
-      dockerfile: ProductApi/Dockerfile
 
   orderapi:
     image: ${DOCKER_REGISTRY-}orderapi
     build:
       context: .
       dockerfile: OrderApi/Dockerfile
-
+      
+  productapi:
+    image: ${DOCKER_REGISTRY-}productapi
+    build:
+      context: .
+      dockerfile: ProductApi/Dockerfile
+      

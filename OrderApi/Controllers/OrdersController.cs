@@ -42,7 +42,7 @@ namespace OrderApi.Controllers
             return new ObjectResult(item);
         }
 
-        // GET orders/customer/5
+        // GET orders/customer/1
         [HttpGet("customer/{id}")]
         public IEnumerable<Order> GetAllByCustomerId(int id)
         {

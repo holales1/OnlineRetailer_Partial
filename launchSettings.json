@@ -10,7 +10,7 @@
       },
       "commandVersion": "1.0"
     },
-    "NoDebug": {
+    "DockerNoDebug": {
       "commandName": "DockerCompose",
       "serviceActions": {
         "customerapi": "StartWithoutDebugging",
