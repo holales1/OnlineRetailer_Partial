@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OrderApi.Data;
 using OrderApi.Models;
 using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace OrderApi.Controllers
 {
@@ -81,13 +81,13 @@ namespace OrderApi.Controllers
 
             List<Product> productList = getProductList(order);
 
-            if (checkIfAllProductsAreAvaliable(productList, order)==false)
+            if (checkIfAllProductsAreAvaliable(productList, order) == false)
             {
                 string content = "We haven't enough items today, please do the order another day.";
                 sendEmail(customer.Email, content);
                 return BadRequest();
             }
-            
+
 
             bool productUpdated = setReservedItemsForEachProduct(productList, order);
 
@@ -111,7 +111,7 @@ namespace OrderApi.Controllers
             return NoContent();
         }
 
-        // Put orders/paid/5
+        // Put orders/pay/5
         [HttpPut("pay/{id}")]
         public IActionResult PayOrder(int id)
         {
@@ -154,7 +154,7 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                bool productsUpdated= cancelProductStock(order);
+                bool productsUpdated = cancelProductStock(order);
 
                 if (productsUpdated)
                 {
@@ -219,9 +219,9 @@ namespace OrderApi.Controllers
             }
         }
 
-        private bool sendEmail(string dest, string content)
-        {
 
+        public bool sendEmail(string dest, string content)
+        {
             RestClient clientTotalEmail = new RestClient("https://localhost:5021/emails/total/");
             var requestTotalEmail = new RestRequest();
             var responseTotalEmail = clientTotalEmail.GetAsync<int>(requestTotalEmail);
@@ -242,7 +242,7 @@ namespace OrderApi.Controllers
 
         }
 
-        private Product getProduct(int productId)
+        public Product getProduct(int productId)
         {
             RestClient clientProduct = new RestClient("https://localhost:5001/products/");
             var requestProduct = new RestRequest(productId.ToString());
@@ -253,7 +253,7 @@ namespace OrderApi.Controllers
             return product;
         }
 
-        private bool setProduct(Product product)
+        public bool setProduct(Product product)
         {
             RestClient clientProduct = new RestClient("https://localhost:5001/products/");
 
@@ -265,7 +265,7 @@ namespace OrderApi.Controllers
             return updateResponse.IsCompletedSuccessfully;
         }
 
-        private bool setCustomer(Customer customer)
+        public bool setCustomer(Customer customer)
         {
             RestClient clientCustomer = new RestClient("https://localhost:5011/customers/");
             var requestCustomer = new RestRequest(customer.Id.ToString());
@@ -275,8 +275,8 @@ namespace OrderApi.Controllers
 
             return responseCustomer.IsCompletedSuccessfully;
         }
-    
-        private Customer getCustomer(int customerId)
+
+        public Customer getCustomer(int customerId)
         {
             RestClient cCustomer = new RestClient("https://localhost:5011/customers/");
             var requestCustomer = new RestRequest(customerId.ToString());
@@ -286,11 +286,11 @@ namespace OrderApi.Controllers
 
             return orderedCustomer;
         }
-    
-        private bool sendProductStock(Order order)
+
+        public bool sendProductStock(Order order)
         {
             bool aux = true;
-            foreach(OrderLine line in order.orderLines)
+            foreach (OrderLine line in order.orderLines)
             {
                 Product product = getProduct(line.ProductId);
 
@@ -302,7 +302,7 @@ namespace OrderApi.Controllers
             return aux;
         }
 
-        private List<Product> getProductList(Order order)
+        public List<Product> getProductList(Order order)
         {
             List<Product> productList = new List<Product>();
             foreach (var orderLine in order.orderLines)
@@ -313,7 +313,7 @@ namespace OrderApi.Controllers
             return productList;
         }
 
-        private bool checkIfAllProductsAreAvaliable(List<Product> productList, Order order)
+        public bool checkIfAllProductsAreAvaliable(List<Product> productList, Order order)
         {
             foreach (var product in productList)
             {
@@ -326,14 +326,14 @@ namespace OrderApi.Controllers
             return true;
         }
 
-        private bool setReservedItemsForEachProduct(List<Product> products, Order order)
+        public bool setReservedItemsForEachProduct(List<Product> products, Order order)
         {
             foreach (var product in products)
             {
                 var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
                 product.ItemsReserved += selectedOrder.Quantity;
                 bool productUpdated = setProduct(product);
-                if (productUpdated==false)
+                if (productUpdated == false)
                 {
                     return false;
                 }
@@ -341,7 +341,7 @@ namespace OrderApi.Controllers
             return true;
         }
 
-        private bool cancelProductStock(Order order)
+        public bool cancelProductStock(Order order)
         {
             bool aux = true;
             foreach (OrderLine line in order.orderLines)
@@ -355,16 +355,17 @@ namespace OrderApi.Controllers
             return aux;
         }
 
-        private int totalAmount(Order order)
+        public int totalAmount(Order order)
         {
             int total = 0;
             foreach (OrderLine line in order.orderLines)
             {
                 Product product = getProduct(line.ProductId);
                 total += line.Quantity * product.Price;
-            }            
+            }
             return total;
         }
+
     }
 }
 

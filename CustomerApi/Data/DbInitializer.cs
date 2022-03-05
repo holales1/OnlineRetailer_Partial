@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CustomerApi.Models;
-using System;
 
 namespace CustomerApi.Data
 {
@@ -13,7 +12,7 @@ namespace CustomerApi.Data
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            // Look for any Products
+            // Look for any Customers
             if (context.Customers.Any())
             {
                 return;   // DB has been seeded
@@ -41,5 +40,6 @@ namespace CustomerApi.Data
             context.Customers.AddRange(customers);
             context.SaveChanges();
         }
+
     }
 }

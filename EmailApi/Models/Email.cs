@@ -1,5 +1,4 @@
-﻿
-namespace EmailApi.Models
+﻿namespace EmailApi.Models
 {
     public class Email
     {
