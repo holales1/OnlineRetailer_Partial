@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProductApi.Data;
 using ProductApi.Models;
 using SharedModels;
+using System.Collections.Generic;
 
 namespace ProductApi.Controllers
 {
@@ -27,7 +27,7 @@ namespace ProductApi.Controllers
         }
 
         // GET products/5
-        [HttpGet("{id}", Name="GetProduct")]
+        [HttpGet("{id}", Name = "GetProduct")]
         public IActionResult Get(int id)
         {
             var item = repository.Get(id);
@@ -41,7 +41,7 @@ namespace ProductApi.Controllers
 
         // POST products
         [HttpPost]
-        public IActionResult Post([FromBody]ProductDto productDto)
+        public IActionResult Post([FromBody] ProductDto productDto)
         {
             if (productDto == null)
             {
@@ -92,6 +92,6 @@ namespace ProductApi.Controllers
             repository.Remove(id);
             return new NoContentResult();
         }
-    
+
     }
 }

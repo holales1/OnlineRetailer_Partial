@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using OrderApi.Models;
 using System;
+using SharedModels;
 
 namespace OrderApi.Data
 {
