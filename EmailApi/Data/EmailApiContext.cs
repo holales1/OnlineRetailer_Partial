@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using EmailApi.Models;
+﻿using EmailApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailApi.Data
 {

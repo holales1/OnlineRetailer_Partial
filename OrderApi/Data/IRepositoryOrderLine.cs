@@ -1,5 +1,4 @@
-﻿using OrderApi.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace OrderApi.Data
 {

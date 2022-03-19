@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CustomerApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
-using CustomerApi.Models;
 
 namespace CustomerApi.Data
 {
@@ -14,11 +14,16 @@ namespace CustomerApi.Data
             db = context;
         }
 
+        public Customer Get(int? customerId)
+        {
+            return db.Customers.FirstOrDefault(o => o.Id == customerId);
+        }
+
         Customer IRepository<Customer>.Add(Customer entity)
         {
             if (entity.BillingAddress == null)
                 entity.BillingAddress = entity.ShippingAddress;
-            
+
             var newCustomer = db.Customers.Add(entity).Entity;
             db.SaveChanges();
             return newCustomer;

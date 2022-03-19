@@ -1,16 +1,22 @@
+using CustomerApi.Data;
+using CustomerApi.Infrastructure;
+using CustomerApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CustomerApi.Data;
-using CustomerApi.Models;
+using SharedModels;
+using System.Threading.Tasks;
 
 namespace CustomerApi
 {
     public class Startup
     {
+        string cloudAMQPConnectionString =
+            "host=roedeer.rmq.cloudamqp.com;virtualHost=mlmsucqa;username=mlmsucqa;password=ie6BkUxeRm2WhugOZerChu99Fn4rC635";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,6 +36,9 @@ namespace CustomerApi
             // Register database initializer for dependency injection
             services.AddTransient<IDbInitializer, DbInitializer>();
 
+            // Register ProductConverter for dependency injection
+            services.AddSingleton<IConverter<Customer, CustomerDto>, CustomerConverter>();
+
             services.AddControllers();
         }
 
@@ -45,6 +54,11 @@ namespace CustomerApi
                 var dbInitializer = services.GetService<IDbInitializer>();
                 dbInitializer.Initialize(dbContext);
             }
+
+            // Create a message listener in a separate thread.
+            Task.Factory.StartNew(() =>
+                new MessageListener(app.ApplicationServices, cloudAMQPConnectionString).Start());
+
 
             if (env.IsDevelopment())
             {

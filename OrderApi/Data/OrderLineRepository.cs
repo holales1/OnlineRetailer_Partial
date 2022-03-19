@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using SharedModels;
+using System.Collections.Generic;
 using System.Linq;
-using OrderApi.Models;
-using System;
 
 namespace OrderApi.Data
 {
@@ -17,7 +15,7 @@ namespace OrderApi.Data
 
         OrderLine IRepositoryOrderLine<OrderLine>.Add(OrderLine entity)
         {
-            
+
             var newOrderLine = db.OrderLines.Add(entity).Entity;
             db.SaveChanges();
             return newOrderLine;

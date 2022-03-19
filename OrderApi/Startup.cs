@@ -5,12 +5,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OrderApi.Data;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
+using SharedModels;
 
 namespace OrderApi
 {
     public class Startup
     {
+        string productServiceUrl = "http://productapi/products/";
+        string customerServiceUrl = "http://customerapi/customers/";
+
+        string cloudAMQPConnectionString =
+           "host=roedeer.rmq.cloudamqp.com;virtualHost=mlmsucqa;username=mlmsucqa;password=ie6BkUxeRm2WhugOZerChu99Fn4rC635";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +38,15 @@ namespace OrderApi
 
             // Register database initializer for dependency injection
             services.AddTransient<IDbInitializer, DbInitializer>();
+
+            // Register product service gateway for dependency injection
+            services.AddSingleton<IServiceGateway<ProductDto>>(new ProductServiceGateway(productServiceUrl));
+
+            // Register customer service gateway for dependency injection
+            services.AddSingleton<IServiceGateway<CustomerDto>>(new CustomerServiceGateway(customerServiceUrl));
+
+            // Register MessagePublisher (a messaging gateway) for dependency injection
+            services.AddSingleton<IMessagePublisher>(new MessagePublisher(cloudAMQPConnectionString));
 
             services.AddControllers();
         }
