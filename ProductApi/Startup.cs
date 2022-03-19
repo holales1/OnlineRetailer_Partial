@@ -11,6 +11,9 @@ namespace ProductApi
 {
     public class Startup
     {
+        string cloudAMQPConnectionString =
+            "host=roedeer.rmq.cloudamqp.com;virtualHost=mlmsucqa;username=mlmsucqa;password=ie6BkUxeRm2WhugOZerChu99Fn4rC635";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

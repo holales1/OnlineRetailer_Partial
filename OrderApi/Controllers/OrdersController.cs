@@ -2,6 +2,7 @@
 using OrderApi.Data;
 using OrderApi.Models;
 using RestSharp;
+using SharedModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -242,23 +243,23 @@ namespace OrderApi.Controllers
 
         }
 
-        public Product getProduct(int productId)
+        public ProductDto getProduct(int productId)
         {
             RestClient clientProduct = new RestClient("http://productapi/products/");
             var requestProduct = new RestRequest(productId.ToString());
-            var responseProduct = clientProduct.GetAsync<Product>(requestProduct);
+            var responseProduct = clientProduct.GetAsync<ProductDto>(requestProduct);
             responseProduct.Wait();
-            Product product = responseProduct.Result;
+            ProductDto productDto = responseProduct.Result;
 
-            return product;
+            return productDto;
         }
 
-        public bool setProduct(Product product)
+        public bool setProduct(ProductDto productDto)
         {
             RestClient clientProduct = new RestClient("http://productapi/products/");
 
-            var updateRequest = new RestRequest(product.Id.ToString());
-            updateRequest.AddJsonBody(product);
+            var updateRequest = new RestRequest(productDto.Id.ToString());
+            updateRequest.AddJsonBody(productDto);
             var updateResponse = clientProduct.PutAsync(updateRequest);
             updateResponse.Wait();
 
@@ -292,34 +293,34 @@ namespace OrderApi.Controllers
             bool aux = true;
             foreach (OrderLine line in order.orderLines)
             {
-                Product product = getProduct(line.ProductId);
+                ProductDto productDto = getProduct(line.ProductId);
 
-                product.ItemsReserved -= line.Quantity;
-                product.ItemsInStock -= line.Quantity;
+                productDto.ItemsReserved -= line.Quantity;
+                productDto.ItemsInStock -= line.Quantity;
 
-                aux = setProduct(product);
+                aux = setProduct(productDto);
             }
             return aux;
         }
 
-        public List<Product> getProductList(Order order)
+        public List<ProductDto> getProductList(Order order)
         {
-            List<Product> productList = new List<Product>();
+            List<ProductDto> productDtoList = new List<ProductDto>();
             foreach (var orderLine in order.orderLines)
             {
-                Product product = getProduct(orderLine.ProductId);
-                productList.Add(product);
+                ProductDto productDto = getProduct(orderLine.ProductId);
+                productDtoList.Add(productDto);
             }
-            return productList;
+            return productDtoList;
         }
                
         public bool checkIfAllProductsAreAvaliable(Order order)
         {
-            List<Product> productList = getProductList(order);
-            foreach (var product in productList)
+            List<ProductDto> productDtoList = getProductList(order);
+            foreach (var productDto in productDtoList)
             {
-                var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
-                if (selectedOrder.Quantity > product.ItemsInStock - product.ItemsReserved)
+                var selectedOrder = order.orderLines.Where(o => o.ProductId == productDto.Id).FirstOrDefault();
+                if (selectedOrder.Quantity > productDto.ItemsInStock - productDto.ItemsReserved)
                 {
                     return false;
                 }
@@ -329,12 +330,12 @@ namespace OrderApi.Controllers
 
         public bool setReservedItemsForEachProduct(Order order)
         {
-            List<Product> productList = getProductList(order);
-            foreach (var product in productList)
+            List<ProductDto> productDtoList = getProductList(order);
+            foreach (var productDto in productDtoList)
             {
-                var selectedOrder = order.orderLines.Where(o => o.ProductId == product.Id).FirstOrDefault();
-                product.ItemsReserved += selectedOrder.Quantity;
-                bool productUpdated = setProduct(product);
+                var selectedOrder = order.orderLines.Where(o => o.ProductId == productDto.Id).FirstOrDefault();
+                productDto.ItemsReserved += selectedOrder.Quantity;
+                bool productUpdated = setProduct(productDto);
                 if (productUpdated == false)
                 {
                     return false;
@@ -348,11 +349,11 @@ namespace OrderApi.Controllers
             bool aux = true;
             foreach (OrderLine line in order.orderLines)
             {
-                Product product = getProduct(line.ProductId);
+                ProductDto productDto = getProduct(line.ProductId);
 
-                product.ItemsReserved -= line.Quantity;
+                productDto.ItemsReserved -= line.Quantity;
 
-                aux = setProduct(product);
+                aux = setProduct(productDto);
             }
             return aux;
         }
@@ -362,8 +363,8 @@ namespace OrderApi.Controllers
             int total = 0;
             foreach (OrderLine line in order.orderLines)
             {
-                Product product = getProduct(line.ProductId);
-                total += line.Quantity * product.Price;
+                ProductDto productDto = getProduct(line.ProductId);
+                total += line.Quantity * productDto.Price;
             }
             return total;
         }
