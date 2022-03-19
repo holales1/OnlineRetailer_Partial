@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CustomerApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
-using CustomerApi.Models;
 
 namespace CustomerApi.Data
 {
@@ -18,7 +18,7 @@ namespace CustomerApi.Data
         {
             if (entity.BillingAddress == null)
                 entity.BillingAddress = entity.ShippingAddress;
-            
+
             var newCustomer = db.Customers.Add(entity).Entity;
             db.SaveChanges();
             return newCustomer;

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using EmailApi.Models;
+using System.Collections.Generic;
 using System.Linq;
-using EmailApi.Models;
 
 namespace EmailApi.Data
 {
@@ -15,7 +14,7 @@ namespace EmailApi.Data
         }
 
         Email IRepository<Email>.Add(Email entity)
-        {            
+        {
             var newEmail = db.Emails.Add(entity).Entity;
             db.SaveChanges();
             return newEmail;

@@ -1,14 +1,14 @@
+using CustomerApi.Data;
+using CustomerApi.Infrastructure;
+using CustomerApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CustomerApi.Data;
-using CustomerApi.Models;
 using SharedModels;
 using System.Threading.Tasks;
-using CustomerApi.Infrastructure;
 
 namespace CustomerApi
 {

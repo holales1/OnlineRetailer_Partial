@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using EmailApi.Data;
+﻿using EmailApi.Data;
 using EmailApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace EmailApi.Controllers
 {

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using CustomerApi.Data;
+﻿using CustomerApi.Data;
 using CustomerApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace CustomerApi.Controllers
 {
@@ -51,7 +51,7 @@ namespace CustomerApi.Controllers
 
         // PUT customers/3
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Customer customer)
+        public IActionResult Put(int id, [FromBody] Customer customer)
         {
             if (customer == null || customer.Id != id)
             {

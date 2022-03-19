@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using EmailApi.Models;
+using System.Collections.Generic;
 using System.Linq;
-using EmailApi.Models;
 
 namespace EmailApi.Data
 {
