@@ -14,7 +14,6 @@ namespace OrderApi
     {
         string productServiceUrl = "http://productapi/products/";
         string customerServiceUrl = "http://customerapi/customers/";
-        string emailServiceUrl = "http://emailapi/emails/";
 
         string cloudAMQPConnectionString =
            "host=roedeer.rmq.cloudamqp.com;virtualHost=mlmsucqa;username=mlmsucqa;password=ie6BkUxeRm2WhugOZerChu99Fn4rC635";
@@ -45,9 +44,6 @@ namespace OrderApi
 
             // Register customer service gateway for dependency injection
             services.AddSingleton<IServiceGateway<CustomerDto>>(new CustomerServiceGateway(customerServiceUrl));
-
-            // Register email service gateway for dependency injection
-            services.AddSingleton<IServiceGateway<EmailDto>>(new EmailServiceGateway(emailServiceUrl));
 
             // Register MessagePublisher (a messaging gateway) for dependency injection
             services.AddSingleton<IMessagePublisher>(new MessagePublisher(cloudAMQPConnectionString));

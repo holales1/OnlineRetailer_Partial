@@ -12,5 +12,8 @@ namespace OrderApi.Infrastructure
         void PublishOrderStatusChangedMessage(int? customerId,
                                               ICollection<OrderLine> orderLines,
                                               string topic);
+        void PublishSendEmailMessage(string destination,
+                                     string content,
+                                     string topic);
     }
 }

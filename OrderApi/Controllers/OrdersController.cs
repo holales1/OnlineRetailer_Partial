@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrderApi.Data;
 using OrderApi.Infrastructure;
-using RestSharp;
 using SharedModels;
 using System;
 using System.Collections.Generic;
@@ -18,20 +17,17 @@ namespace OrderApi.Controllers
         //private readonly IRepositoryOrderLine<OrderLine> repositoryOrderLines;
         private readonly IServiceGateway<ProductDto> productGateway;
         private readonly IServiceGateway<CustomerDto> customerGateway;
-        private readonly IServiceGateway<EmailDto> emailGateway;
         private readonly IMessagePublisher messagePublisher;
 
         public OrdersController(IRepository<Order> repos,
                                 IRepositoryOrderLine<OrderLine> repos2,
                                 IServiceGateway<ProductDto> productSGateway,
                                 IServiceGateway<CustomerDto> customerSGateway,
-                                IServiceGateway<EmailDto> emailSGateway,
                                 IMessagePublisher publisher)
         {
             repositoryOrders = repos;
             productGateway = productSGateway;
             customerGateway = customerSGateway;
-            emailGateway = emailSGateway;
             messagePublisher = publisher;
             //repositoryOrderLines = repos2;
         }
@@ -78,12 +74,12 @@ namespace OrderApi.Controllers
                 return BadRequest();
             }
 
-            CustomerDto customerDto = getCustomer(order.CustomerId);
+            CustomerDto customerDto = customerGateway.Get(order.CustomerId);
 
             if (customerDto.Id == 0)
             {
                 string content = "You dont have an account, please register before order.";
-                sendEmail(customerDto.Email, content);
+                messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                 return StatusCode(403, "The customer doesn't exists");
             }
@@ -91,17 +87,17 @@ namespace OrderApi.Controllers
             if (customerDto.CreditStanding != 0)
             {
                 string content = String.Format("You already have a deb of {0}kr, please pay it before order more.", customerDto.CreditStanding);
-                sendEmail(customerDto.Email, content);
+                messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                 return StatusCode(403, "The customer has debts");
             }
 
             List<ProductDto> productDtoList;
 
-            if (!checkIfAllProductsAreAvaliable(order, out productDtoList))
+            if (!checkProductsAvaliable(order, out productDtoList))
             {
                 string content = "We haven't enough items today, please do the order another day.";
-                sendEmail(customerDto.Email, content);
+                messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                 return StatusCode(500, "Not enough items in stock.");
             }
@@ -117,7 +113,7 @@ namespace OrderApi.Controllers
                 var newOrder = repositoryOrders.Add(order);
 
                 string content = "The order has been accepted.";
-                sendEmail(customerDto.Email, content);
+                messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                 return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
             }
@@ -135,7 +131,7 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Shipped)
             {
-                CustomerDto customerDto = getCustomer(order.CustomerId);
+                CustomerDto customerDto = customerGateway.Get(order.CustomerId);
 
                 try
                 {
@@ -148,7 +144,7 @@ namespace OrderApi.Controllers
                     repositoryOrders.Edit(order);
 
                     string content = String.Format("Thanks for pay your order {0}", order.Id);
-                    sendEmail(customerDto.Email, content);
+                    messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                     return StatusCode(201, "Order paid correctly");
                 }
@@ -171,7 +167,7 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                CustomerDto customerDto = getCustomer(order.CustomerId);
+                CustomerDto customerDto = customerGateway.Get(order.CustomerId);
 
                 try
                 {
@@ -184,7 +180,7 @@ namespace OrderApi.Controllers
                     repositoryOrders.Edit(order);
 
                     string content = String.Format("The order with id: {0}, has been cancelled.", order.Id);
-                    sendEmail(customerDto.Email, content);
+                    messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                     return StatusCode(201, "Order cancelled correctly");
                 }
@@ -207,7 +203,7 @@ namespace OrderApi.Controllers
 
             if (order.State == Order.Status.Completed)
             {
-                CustomerDto customerDto = getCustomer(order.CustomerId);
+                CustomerDto customerDto = customerGateway.Get(order.CustomerId);
 
                 try
                 {
@@ -219,7 +215,7 @@ namespace OrderApi.Controllers
                     repositoryOrders.Edit(order);
 
                     string content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
-                    sendEmail(customerDto.Email, content);
+                    messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
                     return StatusCode(201, "Order cancelled correctly");
                 }
@@ -236,56 +232,18 @@ namespace OrderApi.Controllers
 
 
 
-        public bool sendEmail(string dest, string content)
-        {
-            RestClient clientTotalEmail = new RestClient("http://emailapi/emails/total/");
-            var requestTotalEmail = new RestRequest();
-            var responseTotalEmail = clientTotalEmail.GetAsync<int>(requestTotalEmail);
-            responseTotalEmail.Wait();
-            int totalEmails = responseTotalEmail.Result;
-
-            EmailDto emailDto = new EmailDto();
-            emailDto.Id = totalEmails + 1;
-            emailDto.Destination = dest;
-            emailDto.Content = content;
-
-            RestClient clientSendEmail = new RestClient("http://emailapi/emails/");
-            var requestSendEmail = new RestRequest();
-            requestSendEmail.AddJsonBody(emailDto);
-            var responseSendEmail = clientSendEmail.PostAsync(requestSendEmail);
-            responseSendEmail.Wait();
-            return responseSendEmail.IsCompletedSuccessfully;
-
-        }
-
-        public ProductDto getProduct(int productId)
-        {
-            RestClient clientProduct = new RestClient("http://productapi/products/");
-            var requestProduct = new RestRequest(productId.ToString());
-            var responseProduct = clientProduct.GetAsync<ProductDto>(requestProduct);
-            responseProduct.Wait();
-            ProductDto productDto = responseProduct.Result;
-
-            return productDto;
-        }
-
-        public CustomerDto getCustomer(int customerId)
-        {
-            return customerGateway.Get(customerId);
-        }
-
-        public List<ProductDto> getProductList(Order order)
+        private List<ProductDto> getProductList(Order order)
         {
             List<ProductDto> productDtoList = new List<ProductDto>();
             foreach (var orderLine in order.OrderLines)
             {
-                ProductDto productDto = getProduct(orderLine.ProductId);
+                ProductDto productDto = productGateway.Get(orderLine.ProductId);
                 productDtoList.Add(productDto);
             }
             return productDtoList;
         }
 
-        public bool checkIfAllProductsAreAvaliable(Order order, out List<ProductDto> productDtoList)
+        private bool checkProductsAvaliable(Order order, out List<ProductDto> productDtoList)
         {
             productDtoList = getProductList(order);
             foreach (var productDto in productDtoList)
@@ -299,7 +257,7 @@ namespace OrderApi.Controllers
             return true;
         }
 
-        public int calculateAmount(Order order, List<ProductDto> products)
+        private int calculateAmount(Order order, List<ProductDto> products)
         {
             int total = 0;
             foreach (OrderLine line in order.OrderLines)
@@ -311,7 +269,7 @@ namespace OrderApi.Controllers
             return total;
         }
 
-        public int calculateAmount(Order order)
+        private int calculateAmount(Order order)
         {
             int total = 0;
             List<ProductDto> products = getProductList(order);

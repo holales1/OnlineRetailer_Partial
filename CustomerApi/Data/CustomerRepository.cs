@@ -14,6 +14,11 @@ namespace CustomerApi.Data
             db = context;
         }
 
+        public Customer Get(int? customerId)
+        {
+            return db.Customers.FirstOrDefault(o => o.Id == customerId);
+        }
+
         Customer IRepository<Customer>.Add(Customer entity)
         {
             if (entity.BillingAddress == null)

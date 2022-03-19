@@ -32,7 +32,7 @@ namespace ProductApi.Infrastructure
 
                 bus.PubSub.Subscribe<OrderStatusChangedMessage>("productApiCancelID",
                                                                 HandleOrderCanceled,
-                                                                x => x.WithTopic("cancelled"));
+                                                                x => x.WithTopic("canceled"));
 
                 bus.PubSub.Subscribe<OrderStatusChangedMessage>("productApiSendID",
                                                                 HandleOrderSent,

@@ -20,6 +20,17 @@ namespace OrderApi.Infrastructure
             bus.Dispose();
         }
 
+        public void PublishSendEmailMessage(string destination, string content, string topic)
+        {
+            SendEmailMessage message = new SendEmailMessage
+            {
+                Destination = destination,
+                Content = content
+            };
+
+            bus.PubSub.Publish(message, topic);
+        }
+
         public void PublishOrderStatusChangedMessage(int? customerId, ICollection<OrderLine> orderLines, int amount, string topic)
         {
             OrderStatusChangedMessage message = new OrderStatusChangedMessage
@@ -42,5 +53,6 @@ namespace OrderApi.Infrastructure
 
             bus.PubSub.Publish(message, topic);
         }
+
     }
 }
