@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CustomerApi.Models;
+using System.Collections.Generic;
 
 namespace CustomerApi.Data
 {
@@ -9,5 +10,6 @@ namespace CustomerApi.Data
         T Add(T entity);
         void Edit(T entity);
         void Remove(int id);
+        Customer Get(int? customerId);
     }
 }

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using OrderApi.Models;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
 using SharedModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OrderApi.Data
 {
@@ -20,7 +19,7 @@ namespace OrderApi.Data
         {
             if (entity.Date == null)
                 entity.Date = DateTime.Now;
-            
+
             var newOrder = db.Orders.Add(entity).Entity;
             db.SaveChanges();
             return newOrder;
@@ -34,17 +33,17 @@ namespace OrderApi.Data
 
         Order IRepository<Order>.Get(int id)
         {
-            return db.Orders.Include(o => o.orderLines).FirstOrDefault(o => o.Id == id);
+            return db.Orders.Include(o => o.OrderLines).FirstOrDefault(o => o.Id == id);
         }
 
-       Order IRepository<Order>.GetByCustomerId(int customerId)
+        Order IRepository<Order>.GetByCustomerId(int customerId)
         {
             return db.Orders.Where(o => o.CustomerId == customerId && o.State != Order.Status.Paid).FirstOrDefault();
         }
 
         IEnumerable<Order> IRepository<Order>.GetAll()
         {
-            return db.Orders.Include(o => o.orderLines).ToList();
+            return db.Orders.Include(o => o.OrderLines).ToList();
         }
 
         void IRepository<Order>.Remove(int id)

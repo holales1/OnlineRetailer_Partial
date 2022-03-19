@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using OrderApi.Models;
+﻿using SharedModels;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OrderApi.Data
 {
@@ -26,8 +26,8 @@ namespace OrderApi.Data
 
             };
 
-            List<OrderLine> orderLines = new List<OrderLine> 
-            { 
+            List<OrderLine> orderLines = new List<OrderLine>
+            {
                 new OrderLine{ OrderId=1, ProductId=1,Quantity=2},
                 new OrderLine{ OrderId=1, ProductId=2,Quantity=1},
                 new OrderLine{ OrderId=1, ProductId=3,Quantity=1},
