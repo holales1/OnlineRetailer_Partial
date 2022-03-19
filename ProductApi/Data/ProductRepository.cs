@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 using ProductApi.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProductApi.Data
 {
