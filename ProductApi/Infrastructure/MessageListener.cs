@@ -83,7 +83,6 @@ namespace ProductApi.Infrastructure
                 {
                     Product product = productRepos.Get(orderLine.ProductId);
                     product.ItemsReserved -= orderLine.Quantity;
-                    product.ItemsInStock += orderLine.Quantity;
                     productRepos.Edit(product);
                 }
             }
