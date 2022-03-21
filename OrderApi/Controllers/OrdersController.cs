@@ -217,7 +217,7 @@ namespace OrderApi.Controllers
                     string content = String.Format("Order with id: {0}, has been shipped.", order.Id.ToString());
                     messagePublisher.PublishSendEmailMessage(customerDto.Email, content, "sendEmail");
 
-                    return StatusCode(201, "Order cancelled correctly");
+                    return StatusCode(201, "Order sended correctly");
                 }
                 catch
                 {
@@ -262,7 +262,7 @@ namespace OrderApi.Controllers
             int total = 0;
             foreach (OrderLine line in order.OrderLines)
             {
-                ProductDto productDto = products.Find(x => x.Id == line.Id);
+                ProductDto productDto = products.Find(x => x.Id == line.ProductId);
                 total += line.Quantity * productDto.Price;
             }
 
@@ -275,7 +275,7 @@ namespace OrderApi.Controllers
             List<ProductDto> products = getProductList(order);
             foreach (OrderLine line in order.OrderLines)
             {
-                ProductDto productDto = products.Find(x => x.Id == line.Id);
+                ProductDto productDto = products.Find(x => x.Id == line.ProductId);
                 total += line.Quantity * productDto.Price;
             }
 
