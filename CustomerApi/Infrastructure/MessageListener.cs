@@ -30,11 +30,11 @@ namespace CustomerApi.Infrastructure
                                                                 HandleOrderCompleted,
                                                                 x => x.WithTopic("completed"));
 
-                bus.PubSub.Subscribe<OrderStatusChangedMessage>("productApiCancelID",
+                bus.PubSub.Subscribe<OrderStatusChangedMessage>("customerApiCancelID",
                                                                 HandleOrderPaidOrCancelled,
                                                                 x => x.WithTopic("cancelled"));
 
-                bus.PubSub.Subscribe<OrderStatusChangedMessage>("productApiPayID",
+                bus.PubSub.Subscribe<OrderStatusChangedMessage>("customerApiPayID",
                                                                 HandleOrderPaidOrCancelled,
                                                                 x => x.WithTopic("paid"));
 
