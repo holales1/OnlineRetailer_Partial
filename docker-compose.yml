@@ -25,3 +25,9 @@ services:
       context: .
       dockerfile: ProductApi/Dockerfile
       
+  ocelotapigateway:
+    image: ${DOCKER_REGISTRY-}ocelotapigateway
+    build:
+      context: .
+      dockerfile: OcelotApiGateway/Dockerfile
+
