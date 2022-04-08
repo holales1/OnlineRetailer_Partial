@@ -230,7 +230,21 @@ namespace OrderApi.Controllers
             }
         }
 
+        [HttpGet("product/{id}", Name = "GetOrderByProduct")]
+        public IEnumerable<Order> GetByProduct(int id)
+        {
+            List<Order> ordersWithSpecificProduct = new List<Order>();
 
+            foreach (var order in repositoryOrders.GetAll())
+            {
+                if (order.OrderLines.Where(o => o.ProductId == id).Any())
+                {
+                    ordersWithSpecificProduct.Add(order);
+                }
+            }
+
+            return ordersWithSpecificProduct;
+        }
 
         private List<ProductDto> getProductList(Order order)
         {
