@@ -89,11 +89,24 @@
       ],
       "UpstreamPathTemplate": "/orderapi/{catchAll}",
       "UpstreamHttpMethod": [ "Get", "Post" ]
-    }
+    },
     //////////////////////////////////////////////
     //////////////  CUSTOMER API  ////////////////
     //////////////////////////////////////////////
-
+    {
+      // ProductApi routes for aggregate: Orders and products
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customerapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/customerapi/customers",
+      "UpstreamHttpMethod": [ "Get" ],
+      "Key": "allcustomers"
+    },
 
   ],
   // Aggregates:
