@@ -1,5 +1,8 @@
 {
   "Routes": [
+    //////////////////////////////////////////////
+    //////////////  PRODUCT API  /////////////////
+    //////////////////////////////////////////////
     {
       // ProductApi routes for aggregate: Orders and products
       "DownstreamPathTemplate": "/products",
@@ -15,20 +18,6 @@
       "Key": "allproducts"
     },
     {
-      // OrderApi routes for aggregate: Orders and products
-      "DownstreamPathTemplate": "/orders",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "orderapi",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/orderapi/orders",
-      "UpstreamHttpMethod": [ "Get" ],
-      "Key": "allorders"
-    },
-    {
       // ProductApi routes for aggregate: Orders by product
       "DownstreamPathTemplate": "/products/{id}",
       "DownstreamScheme": "http",
@@ -41,6 +30,36 @@
       "UpstreamPathTemplate": "/productapi/products/{id}",
       "UpstreamHttpMethod": [ "Get" ],
       "Key": "product"
+    },
+    {
+      // Other ProductApi routes
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/productapi/{catchAll}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //////////////////////////////////////////////
+    ///////////////  ORDER API  //////////////////
+    //////////////////////////////////////////////
+    {
+      // OrderApi routes for aggregate: Orders and products
+      "DownstreamPathTemplate": "/orders",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "orderapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/orderapi/orders",
+      "UpstreamHttpMethod": [ "Get" ],
+      "Key": "allorders"
     },
     {
       // OrderApi routes for aggregate: Orders by product
@@ -59,19 +78,6 @@
       "Key": "ordersbyproduct"
     },
     {
-      // Other ProductApi routes
-      "DownstreamPathTemplate": "/{catchAll}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "productapi",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/productapi/{catchAll}",
-      "UpstreamHttpMethod": [ "Get" ]
-    },
-    {
       // Other OrderApi routes
       "DownstreamPathTemplate": "/{catchAll}",
       "DownstreamScheme": "http",
@@ -84,6 +90,11 @@
       "UpstreamPathTemplate": "/orderapi/{catchAll}",
       "UpstreamHttpMethod": [ "Get", "Post" ]
     }
+    //////////////////////////////////////////////
+    //////////////  CUSTOMER API  ////////////////
+    //////////////////////////////////////////////
+
+
   ],
   // Aggregates:
   "Aggregates": [
