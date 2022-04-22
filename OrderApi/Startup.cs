@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OrderApi.Data;
 using OrderApi.Infrastructure;
+using Prometheus;
 using SharedModels;
 
 namespace OrderApi
@@ -71,6 +72,8 @@ namespace OrderApi
 
             //app.UseHttpsRedirection();
 
+            app.UseHttpMetrics();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -78,6 +81,7 @@ namespace OrderApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
         }
     }

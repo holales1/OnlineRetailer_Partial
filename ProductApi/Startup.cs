@@ -9,6 +9,7 @@ using ProductApi.Infrastructure;
 using ProductApi.Models;
 using SharedModels;
 using System.Threading.Tasks;
+using Prometheus;
 
 namespace ProductApi
 {
@@ -82,6 +83,7 @@ namespace ProductApi
             //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             //});
 
+            app.UseHttpMetrics();
 
             app.UseRouting();
 
@@ -90,6 +92,7 @@ namespace ProductApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
         }
     }

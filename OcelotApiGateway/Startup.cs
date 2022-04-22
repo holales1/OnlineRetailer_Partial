@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Prometheus;
 
 namespace OcelotApiGateway
 {
@@ -32,6 +33,8 @@ namespace OcelotApiGateway
 
             }
 
+            app.UseHttpMetrics();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -39,6 +42,7 @@ namespace OcelotApiGateway
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
             app.UseOcelot().Wait();
         }

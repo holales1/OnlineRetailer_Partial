@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 using SharedModels;
 using System.Threading.Tasks;
 
@@ -67,6 +68,8 @@ namespace CustomerApi
 
             //app.UseHttpsRedirection();
 
+            app.UseHttpMetrics();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -74,6 +77,7 @@ namespace CustomerApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
         }
     }
