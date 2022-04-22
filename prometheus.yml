@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 10s
+scrape_configs:
+    - job_name: 'ocelotapigateway'
+      static_configs:
+      - targets: ['ocelotapigateway:80']
+    - job_name: 'productapi'
+      static_configs:
+      - targets: ['productapi:80'] 
+    - job_name: 'orderapi'
+      static_configs:
+      - targets: ['orderapi:80']
+    - job_name: 'customerapi'
+      static_configs:
+      - targets: ['customerapi:80']
+    - job_name: 'emailapi'
+      static_configs:
+      - targets: ['emailapi:80'] 
+    
